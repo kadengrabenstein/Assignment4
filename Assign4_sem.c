@@ -41,10 +41,11 @@ int main(int argc, char *argv[]){
     sem_init(&s_writer,0,1);
     for(int i=0; i<10; i++){
         atoi(argv[i+1]) == 0 ? pthread_create(&threads[i], NULL, reader, (i + 1)) : pthread_create(&threads[i], NULL, writer, (i + 1));
-        pthread_join(threads[i],NULL);
+        if (atoi(argv[i+1]) == 1) {
+            pthread_join(threads[i],NULL);
+        } else if (i + 1 == 10) {
+            pthread_join(threads[i],NULL);
+        }   
     }
-    // for(int i=0;i<10;i++){
-    //     pthread_join(threads[i],NULL);
-    // }
     return 0;
 }
