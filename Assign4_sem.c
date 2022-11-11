@@ -11,8 +11,9 @@ int numReaders = 0;
 void *reader(void* param){
     sem_wait(&s_reader);
     numReaders++;
-    if(numReaders==1)
+    if(numReaders==1){
         sem_wait(&s_writer);
+    }
     sem_post(&s_reader);
     printf("Reader %d starts reading\n",(int *)param);
     sleep(1);
@@ -39,10 +40,11 @@ int main(int argc, char *argv[]){
     sem_init(&s_reader,0,1);
     sem_init(&s_writer,0,1);
     for(int i=0; i<10; i++){
-        atoi(argv[i+1]) == 0 ? pthread_create(&threads[i], NULL, reader, i) : pthread_create(&threads[i], NULL, writer, (i + 1));
-    }
-    for(int i=0;i<10;i++){
+        atoi(argv[i+1]) == 0 ? pthread_create(&threads[i], NULL, reader, (i + 1)) : pthread_create(&threads[i], NULL, writer, (i + 1));
         pthread_join(threads[i],NULL);
     }
+    // for(int i=0;i<10;i++){
+    //     pthread_join(threads[i],NULL);
+    // }
     return 0;
 }
