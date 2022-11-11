@@ -17,13 +17,13 @@ void *reader(void *param){
         sem_wait(&s_writer);
     }
     sem_post(&s_reader);
-    printf("Reader %d starts reading\n", pthread_self());
+    printf("Reader %d starts reading\n", (int *)param);
     usleep(50);
     numReaders--;
     if(numReaders > 0){
         sem_wait(&s_reader);
     }
-    printf("Reader %d ends reading\n", pthread_self());
+    printf("Reader %d ends reading\n", (int *)param);
     if(numReaders == 0){
         printf("Number of readers: %d\n", numReaders);
         sem_post(&s_writer);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
     sem_init(&s_writer,0,1);
     for(int i=0; i<10; i++){
         printf("%d\n", atoi(argv[i+1]));
-        atoi(argv[i+1]) == 0 ? pthread_create(&readers[i], NULL, reader, NULL) : pthread_create(&writers[i], NULL, writer, NULL);
+        atoi(argv[i+1]) == 0 ? pthread_create(&readers[i], NULL, reader, i) : pthread_create(&writers[i], NULL, writer, i);
     }
     return 0;
 }
