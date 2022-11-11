@@ -1,57 +1,48 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <semaphore.h>
-#include <pthread.h>
+#include<semaphore.h>
+#include<stdio.h>
+#include<stdlib.h>
 #include<unistd.h>
-
-pthread_t writers[10], readers[10];
+#include<pthread.h>
+sem_t s_reader,s_writer;
 pthread_t tid;
+pthread_t threads[10];
 int numReaders = 0;
-sem_t s_reader;
-sem_t s_writer;
 
-void *reader(void *param){
+void *reader(void* param){
     sem_wait(&s_reader);
     numReaders++;
-    if(numReaders == 1){
+    if(numReaders==1)
         sem_wait(&s_writer);
-    }
     sem_post(&s_reader);
-    printf("Reader %d starts reading\n", (int *)param);
-    usleep(50);
+    printf("Reader %d starts reading\n",(int *)param);
+    sleep(1);
+    sem_wait(&s_reader);
     numReaders--;
-    if(numReaders > 0){
-        sem_wait(&s_reader);
-    }
-    printf("Reader %d ends reading\n", (int *)param);
-    if(numReaders == 0){
-        printf("Number of readers: %d\n", numReaders);
+    if(numReaders==0){
         sem_post(&s_writer);
     }
     sem_post(&s_reader);
-    pthread_exit(0);
+    printf("Reader %d ends reading\n",(int *)param);
+    return NULL;
 }
 
-void *writer(void *param){
-    printf("Writer is waiting\n");
+void *writer(void* param){
     sem_wait(&s_writer);
-    printf("Writer has entered\n");
-    usleep(50);
-    if(numReaders == 0){
-        sem_post(&s_writer);
-    }else{
-        sem_post(&s_reader);
-    }
-    printf("Writer has left\n");
-    pthread_exit(0);
+    printf("Writer %d starts writing\n", (int*)param);
+    sleep(1);
+    sem_post(&s_writer);
+    printf("Writer %d ends writing\n",(int *)param);
+    return NULL;
 }
 
 int main(int argc, char *argv[]){
     sem_init(&s_reader,0,1);
     sem_init(&s_writer,0,1);
     for(int i=0; i<10; i++){
-        printf("%d\n", atoi(argv[i+1]));
-        atoi(argv[i+1]) == 0 ? pthread_create(&readers[i], NULL, reader, i) : pthread_create(&writers[i], NULL, writer, i);
+        atoi(argv[i+1]) == 0 ? pthread_create(&threads[i], NULL, reader, i) : pthread_create(&threads[i], NULL, writer, (i + 1));
+    }
+    for(int i=0;i<10;i++){
+        pthread_join(threads[i],NULL);
     }
     return 0;
 }
