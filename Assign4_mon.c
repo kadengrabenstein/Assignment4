@@ -14,8 +14,7 @@ sem_t s_reader, s_writer;
 int numWaitingReaders = 0;
 int numWaitingWriters = 0;
 
-bool isReading = false;
-
+// declaring conditional variables
 pthread_cond_t canRead = PTHREAD_COND_INITIALIZER;
 pthread_cond_t canWrite = PTHREAD_COND_INITIALIZER;
 // declaring mutex
@@ -24,24 +23,19 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void *endRead(void *param) {
     printf("Reader %d ends reading\n",(int *)param);
     if (--numReaders == 0) {
-        pthread_mutex_unlock(&lock);
-        isReading = false;
         pthread_cond_signal(&canWrite);
     }
 }
 void *startRead(void *param) {
-    pthread_mutex_lock(&lock);
+    
     if (numWriters == 1 || numWaitingWriters > 0) {
         numWaitingReaders++;
-        if (isReading == false) {
-            pthread_cond_wait(&canRead, &lock);
-        }
-        isReading = true;
+        pthread_cond_wait(&canRead, &lock);
         numWaitingReaders--;
     }
     printf("Reader %d starts reading\n",(int *)param);
-    sleep(1);
     numReaders++;
+    sleep(1);
     pthread_cond_signal(&canRead);
     endRead((void *)param);
 }
