@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<pthread.h>
-sem_t s_reader,s_writer;
+sem_t s_reader,s_writer;  
 pthread_t tid;
 pthread_t threads[10];  //array that saves threads
 int numReaders = 0;
@@ -37,6 +37,10 @@ void *writer(void* param){
 }
 
 int main(int argc, char *argv[]){
+    if(argc != 11){
+        printf("Please enter 10 arguments from the command line\n");
+        exit(0);
+    }
     sem_init(&s_reader,0,1);    //reader semaphore initialization
     sem_init(&s_writer,0,1);    //writer semaphore initialization
     for(int i=0; i<10; i++){

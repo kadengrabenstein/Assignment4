@@ -43,6 +43,10 @@ void writer(param){
 }
 
 int main(int argc, char *argv[]){
+    if(argc != 11){
+        printf("Please enter 10 arguments from the command line\n");
+        exit(0);
+    }
     s_reader = sem_open(READER, O_CREAT, 0644, 1);
     s_writer = sem_open(WRITER, O_CREAT, 0644, 1);
     for(int i=0; i<10; i++){

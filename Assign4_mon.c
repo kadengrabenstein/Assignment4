@@ -71,6 +71,10 @@ void *startWrite(void *param) {
 
 // main function to create and run threads
 int main(int argc, char *argv[]){
+    if(argc != 11){
+        printf("Please enter 10 arguments from the command line\n");
+        exit(0);
+    }
     for(int i=0; i<10; i++) {
         atoi(argv[i+1]) == 0 ? pthread_create(&threads[i], NULL, startRead, (i + 1)) : pthread_create(&threads[i], NULL, startWrite, (i + 1));
         if (atoi(argv[i+1]) == 1) {
