@@ -6,8 +6,8 @@ Michael Walker and Kaden Grabenstein
 
 ## How to Compile
 1. Use "make" to compile both the semaphore and monitor solution.
-2. ./assign4sem_exe <input> to run semaphore solution
-3. ./assign4mon_exe <input> to run monitor solution
+2. ./assign4sem_exe input to run semaphore solution
+3. ./assign4mon_exe input to run monitor solution
 
 ## Semaphore Solution Pseudocode
 reader{<br/>
